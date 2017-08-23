@@ -1,6 +1,7 @@
 ## 0.1.2 (Unreleased)
 
--
+- Add plugin installer script
+- Allow userdata update
 
 ## 0.1.1 (August 22, 2017)
 
