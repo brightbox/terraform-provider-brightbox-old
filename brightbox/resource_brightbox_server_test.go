@@ -275,6 +275,53 @@ func TestAccBrightboxServer_Update(t *testing.T) {
 	})
 }
 
+func TestAccBrightboxServer_UpdateUserData(t *testing.T) {
+	var afterCreate, afterUpdate brightbox.Server
+	rInt := acctest.RandInt()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckBrightboxServerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckBrightboxServerConfig_basic(rInt),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckBrightboxServerExists("brightbox_server.foobar", &afterCreate),
+					testAccCheckBrightboxServerAttributes(&afterCreate),
+					resource.TestCheckResourceAttr(
+						"brightbox_server.foobar", "name", fmt.Sprintf("foo-%d", rInt)),
+				),
+			},
+
+			{
+				Config: testAccCheckBrightboxServerConfig_userdata_update(rInt),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckBrightboxServerExists("brightbox_server.foobar", &afterUpdate),
+					resource.TestCheckResourceAttr(
+						"brightbox_server.foobar", "name", fmt.Sprintf("foo-%d", rInt)),
+					resource.TestCheckResourceAttr(
+						"brightbox_server.foobar",
+						"user_data",
+						"a26afb778136f34ce2ef86e72be0802498b0291b"),
+					testAccCheckBrightboxServerRecreated(
+						t, &afterCreate, &afterUpdate),
+				),
+			},
+		},
+	})
+}
+
+func testAccCheckBrightboxServerRecreated(t *testing.T,
+	before, after *brightbox.Server) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		if before.Id != after.Id {
+			t.Fatalf("ID changed to %v, but expected in place update", after.Id)
+		}
+		return nil
+	}
+}
+
 func testAccCheckBrightboxServerConfig_basic(rInt int) string {
 	return fmt.Sprintf(`
 resource "brightbox_server" "foobar" {
@@ -282,6 +329,18 @@ resource "brightbox_server" "foobar" {
 	name = "foo-%d"
 	type = "1gb.ssd"
 	user_data = "foo:-with-character's"
+}
+
+%s`, rInt, TestAccBrightboxImageDataSourceConfig_blank_disk)
+}
+
+func testAccCheckBrightboxServerConfig_userdata_update(rInt int) string {
+	return fmt.Sprintf(`
+resource "brightbox_server" "foobar" {
+	image = "${data.brightbox_image.foobar.id}"
+	name = "foo-%d"
+	type = "1gb.ssd"
+	user_data = "foo:-with-different-character's"
 }
 
 %s`, rInt, TestAccBrightboxImageDataSourceConfig_blank_disk)

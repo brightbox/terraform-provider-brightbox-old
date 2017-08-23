@@ -57,7 +57,6 @@ func resourceBrightboxServer() *schema.Resource {
 			"user_data": &schema.Schema{
 				Type:      schema.TypeString,
 				Optional:  true,
-				ForceNew:  true,
 				StateFunc: hash_string,
 			},
 
@@ -244,9 +243,7 @@ func resourceBrightboxServerUpdate(
 		return fmt.Errorf("Error updating server: %s", err)
 	}
 
-	setServerAttributes(d, server)
-
-	return nil
+	return setServerAttributes(d, server)
 }
 
 func addUpdateableServerOptions(
@@ -280,11 +277,11 @@ func addUpdateableServerOptions(
 func setServerAttributes(
 	d *schema.ResourceData,
 	server *brightbox.Server,
-) {
+) error {
 	// If server is deleted, clear the Id to tell Terraform to remove the record
 	if server.Status == "deleted" {
 		d.SetId("")
-		return
+		return nil
 	}
 	d.Set("image", server.Image.Id)
 	d.Set("name", server.Name)
@@ -314,11 +311,37 @@ func setServerAttributes(
 	}
 	d.Set("server_groups", srvGrpIds)
 
-	SetConnectionDetails(d)
+	err := setUserDataDetails(d, server.UserData)
+	if err != nil {
+		return err
+	}
+
+	setConnectionDetails(d)
+
+	return nil
 
 }
 
-func SetConnectionDetails(d *schema.ResourceData) {
+func setUserDataDetails(d *schema.ResourceData, base64_userdata string) error {
+	base64_userdata_length := len(base64_userdata)
+
+	if base64_userdata_length > 0 {
+		userdata, err := base64.StdEncoding.DecodeString(base64_userdata)
+		if err != nil {
+			return fmt.Errorf("Userdata %v, won't decode %s", base64_userdata, err)
+		}
+
+		log.Printf("[DEBUG] Retrieved base64 userdata of length %v", base64_userdata_length)
+		log.Printf("[DEBUG] Decoded to userdata of length %v", len(userdata))
+
+		d.Set("user_data", hash_string(string(userdata)))
+	} else {
+		log.Printf("[DEBUG] No user data found, skipping set")
+	}
+	return nil
+}
+
+func setConnectionDetails(d *schema.ResourceData) {
 	var preferredSSHAddress string
 	if attr, ok := d.GetOk("public_hostname"); ok {
 		preferredSSHAddress = attr.(string)
