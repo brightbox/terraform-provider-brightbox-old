@@ -1,7 +1,6 @@
 package brightbox
 
 import (
-	"encoding/base64"
 	"fmt"
 	"log"
 	"time"
@@ -55,9 +54,25 @@ func resourceBrightboxServer() *schema.Resource {
 			},
 
 			"user_data": &schema.Schema{
-				Type:      schema.TypeString,
-				Optional:  true,
-				StateFunc: hash_string,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"user_data_base64"},
+				StateFunc:     hash_string,
+			},
+
+			"user_data_base64": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"user_data"},
+				ValidateFunc: func(v interface{}, name string) (warns []string, errs []error) {
+					s := v.(string)
+					if !isBase64Encoded(s) {
+						errs = append(errs, fmt.Errorf(
+							"%s: must be base64-encoded", name,
+						))
+					}
+					return
+				},
 			},
 
 			"server_groups": &schema.Schema{
@@ -253,25 +268,27 @@ func addUpdateableServerOptions(
 	assign_string(d, &opts.Name, "name")
 	assign_string_set(d, &opts.ServerGroups, "server_groups")
 	if d.HasChange("user_data") {
-		var encoded_userdata string
-		if attr, ok := d.GetOk("user_data"); ok {
-			log.Printf("[DEBUG] UserData to encode: %s", attr.(string))
-
-			encoded_userdata = base64.StdEncoding.EncodeToString([]byte(attr.(string)))
-
-			if len(encoded_userdata) > userdata_size_limit {
-				return fmt.Errorf(
-					"The supplied user_data contains %d bytes after encoding, this exeeds the limit of %d bytes",
-					len(encoded_userdata),
-					userdata_size_limit,
-				)
-			}
+		encoded_userdata := ""
+		if user_data, ok := d.GetOk("user_data"); ok {
+			log.Printf("[DEBUG] UserData to encode: %s", user_data.(string))
+			encoded_userdata = base64Encode(user_data.(string))
+		} else if user_data, ok := d.GetOk("user_data_base64"); ok {
+			log.Printf("[DEBUG] Encoded Userdata found, passing through")
+			encoded_userdata = user_data.(string)
 		}
-		opts.UserData = &encoded_userdata
+		if encoded_userdata == "" {
+			// Nothing found, nothing to do
+		} else if len(encoded_userdata) > userdata_size_limit {
+			return fmt.Errorf(
+				"The supplied user_data contains %d bytes after encoding, this exeeds the limit of %d bytes",
+				len(encoded_userdata),
+				userdata_size_limit,
+			)
+		} else {
+			opts.UserData = &encoded_userdata
+		}
 	}
-
 	return nil
-
 }
 
 func setServerAttributes(
@@ -311,34 +328,25 @@ func setServerAttributes(
 	}
 	d.Set("server_groups", srvGrpIds)
 
-	err := setUserDataDetails(d, server.UserData)
-	if err != nil {
-		return err
-	}
-
+	setUserDataDetails(d, server.UserData)
 	setConnectionDetails(d)
-
 	return nil
 
 }
 
-func setUserDataDetails(d *schema.ResourceData, base64_userdata string) error {
-	base64_userdata_length := len(base64_userdata)
-
-	if base64_userdata_length > 0 {
-		userdata, err := base64.StdEncoding.DecodeString(base64_userdata)
-		if err != nil {
-			return fmt.Errorf("Userdata %v, won't decode %s", base64_userdata, err)
-		}
-
-		log.Printf("[DEBUG] Retrieved base64 userdata of length %v", base64_userdata_length)
-		log.Printf("[DEBUG] Decoded to userdata of length %v", len(userdata))
-
-		d.Set("user_data", hash_string(string(userdata)))
-	} else {
+func setUserDataDetails(d *schema.ResourceData, base64_userdata string) {
+	if len(base64_userdata) <= 0 {
 		log.Printf("[DEBUG] No user data found, skipping set")
+		return
 	}
-	return nil
+	_, b64 := d.GetOk("user_data_base64")
+	if b64 {
+		log.Printf("[DEBUG] encoded user_data requested, setting user_data_base64")
+		d.Set("user_data_base64", base64_userdata)
+	} else {
+		log.Printf("[DEBUG] decrypted user_data requested, setting user_data")
+		d.Set("user_data", userDataHashSum(base64_userdata))
+	}
 }
 
 func setConnectionDetails(d *schema.ResourceData) {

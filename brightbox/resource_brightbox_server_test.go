@@ -70,6 +70,30 @@ func TestAccBrightboxServer_Blank(t *testing.T) {
 	})
 }
 
+func TestAccBrightboxServer_userDataBase64(t *testing.T) {
+	var server brightbox.Server
+	rInt := acctest.RandInt()
+
+	resource.Test(t, resource.TestCase{
+		PreCheck: func() { testAccPreCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testAccCheckBrightboxServerDestroy,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccCheckBrightboxServerConfig_base64_userdata(rInt),
+				Check: resource.ComposeTestCheckFunc(
+					testAccCheckBrightboxServerExists(
+						"brightbox_server.foobar", &server),
+					resource.TestCheckResourceAttr(
+						"brightbox_server.foobar",
+						"user_data_base64",
+						"aGVsbG8gd29ybGQ="),
+				),
+			},
+		},
+	})
+}
+
 func TestAccBrightboxServer_server_group(t *testing.T) {
 	var server_group brightbox.ServerGroup
 	var server brightbox.Server
@@ -329,6 +353,18 @@ resource "brightbox_server" "foobar" {
 	name = "foo-%d"
 	type = "1gb.ssd"
 	user_data = "foo:-with-character's"
+}
+
+%s`, rInt, TestAccBrightboxImageDataSourceConfig_blank_disk)
+}
+
+func testAccCheckBrightboxServerConfig_base64_userdata(rInt int) string {
+	return fmt.Sprintf(`
+resource "brightbox_server" "foobar" {
+	image = "${data.brightbox_image.foobar.id}"
+	name = "foo-%d"
+	type = "1gb.ssd"
+	user_data_base64 = "${base64encode("hello world")}"
 }
 
 %s`, rInt, TestAccBrightboxImageDataSourceConfig_blank_disk)
