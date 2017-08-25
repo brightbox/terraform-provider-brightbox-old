@@ -15,7 +15,7 @@ modify, and delete Servers. Servers also support
 ## Example Usage
 
 ```hcl
-# Create a new Web Server in the nyc2 region
+# Create a new 512Mb SSD Web Server in the gb1a zone
 resource "brightbox_server" "web" {
   image  = "img-testy"
   name   = "web-1"
@@ -46,7 +46,7 @@ The following attributes are exported:
 * `id` - The ID of the Server
 * `fqdn` - Fully Qualified Domain Name of server
 * `hostname` - short name of server, usually the same as the `id`
-* `interface` - the id reference of the network interface
+* `interface` - the id reference of the network interface. Used to target cloudips.
 * `ipv4_address_private` - The RFC 1912 address of the server
 * `ipv6_address` - the IPv6 address of the server
 * `ipv6_hostname` - the FQDN of the IPv6 address
