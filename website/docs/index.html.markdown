@@ -18,7 +18,7 @@ Use the navigation to the left to read about the available resources.
 
 ```hcl
 # Configure the Brightbox Provider
-provider "aws" {
+provider "brightbox" {
   username = "${var.user_email_address}"
   password = "${var.user_secret_password}"
   account = "${var.account_to_work_on}"
@@ -37,7 +37,7 @@ authentication. The following methods are supported, in this order, and
 explained below:
 
 - Username credentials
-- Static credential
+- Static credentials
 - Username Environment variables
 - Static Environment variables
 
@@ -69,7 +69,7 @@ provider "brightbox" {
 
 ### Static credentials ###
 
-Static credentials can be provided by adding a `apiclient` and
+Static credentials can be provided by adding an `apiclient` and
 `apisecret` in-line in the Brightbox provider block:
 
 Usage:

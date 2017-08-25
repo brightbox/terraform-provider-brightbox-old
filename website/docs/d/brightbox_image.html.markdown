@@ -3,7 +3,7 @@ layout: "brightbox"
 page_title: "Brightbox: brightbox_image"
 sidebar_current: "docs-brightbox-datasource-image"
 description: |-
-  Get information on a Brightbox Image.
+  Get information about a Brightbox Image.
 ---
 
 # brightbox_image
@@ -45,7 +45,7 @@ exactly.
 
 * `official` - (Optional) Boolean to select an official image.
 
-* `compatibility_mode` - (Optional) Boolean to match the compatibilty
+* `compatibility_mode` - (Optional) Boolean to match the compatibility
 mode flag.
 
 * `username` - (Optional) The username used to logon to the image. Matches
@@ -70,6 +70,8 @@ recent one.
 `id` is set to the ID of the found Image. In addition, the following attributes
 are exported:
 
+* `status` - The state the image is in. Usually `available`, `deprecated`
+or `deleted`.
 * `created_at` - The time and date the image was created/registered (UTC)
 * `locked` - true if image has been set as locked and can not be deleted
 * `virtual_size` - The virtual size of the disk image "container" in MB
