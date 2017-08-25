@@ -6,7 +6,7 @@ description: |-
   Get information about a Brightbox Image.
 ---
 
-# brightbox_image
+# brightbox\_image
 
 Use this data source to get the ID of a Brightbox Image for use in other
 resources.

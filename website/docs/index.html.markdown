@@ -1,6 +1,6 @@
 ---
 layout: "brightbox"
-page_title: "Provider: Template"
+page_title: "Provider: Brightbox"
 sidebar_current: "docs-brightbox-index"
 description: |-
   The Brightbox provider is used to interact with the resources supported by Brightbox Cloud. The provider needs to be configured with the proper credentials before it can be used.
