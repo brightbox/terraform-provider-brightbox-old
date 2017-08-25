@@ -50,6 +50,8 @@ The following attributes are exported:
 * `ipv4_address_private` - The RFC 1912 address of the server
 * `ipv6_address` - the IPv6 address of the server
 * `ipv6_hostname` - the FQDN of the IPv6 address
+* `public_hostname` - the FQDN of the public IPv4 address. Appears if a cloud ip is mapped
+* `ipv4_address` - the public IPV4 address of the server. Appears if a cloud ip is mapped
 * `locked` - True if server has been set to locked and cannot be deleted
 * `status` - Current state of the server, usually `active`, `inactive`
 or `deleted`
