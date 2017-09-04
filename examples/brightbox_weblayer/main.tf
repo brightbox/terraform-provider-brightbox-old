@@ -1,6 +1,5 @@
 # Specify the provider and access details
-provider "brightbox" {
-}
+provider "brightbox" {}
 
 resource "brightbox_cloudip" "lb" {
   target = "${brightbox_load_balancer.lb.id}"
@@ -15,35 +14,39 @@ resource "brightbox_cloudip" "server2" {
 }
 
 resource "brightbox_load_balancer" "lb" {
-	name = "Terraform weblayer example"
-	listener {
-		protocol = "https"
-		in = 443
-		out = 8080
-		}
-	listener {
-		protocol = "http"
-		in = 80
-		out = 8080
-		timeout = 10000
-	}
-	listener {
-		protocol = "http+ws"
-		in = 81
-		out = 81
-		timeout = 10000
-	}
-	
-	healthcheck {
-		type = "http"
-		port = 8080
-	}
-	nodes = [
-		  "${brightbox_server.server2.id}",
-		  "${brightbox_server.server1.id}"
-		]
+  name = "Terraform weblayer example"
 
-	certificate_pem = <<EOF
+  listener {
+    protocol = "https"
+    in       = 443
+    out      = 8080
+  }
+
+  listener {
+    protocol = "http"
+    in       = 80
+    out      = 8080
+    timeout  = 10000
+  }
+
+  listener {
+    protocol = "http+ws"
+    in       = 81
+    out      = 81
+    timeout  = 10000
+  }
+
+  healthcheck {
+    type = "http"
+    port = 8080
+  }
+
+  nodes = [
+    "${brightbox_server.server2.id}",
+    "${brightbox_server.server1.id}",
+  ]
+
+  certificate_pem = <<EOF
 -----BEGIN CERTIFICATE-----
 MIIDBzCCAe+gAwIBAgIJAPD+BTBqIVp6MA0GCSqGSIb3DQEBBQUAMBoxGDAWBgNV
 BAMMD3d3dy5leGFtcGxlLmNvbTAeFw0xNjAzMDIxMTU0MDFaFw0yNjAyMjgxMTU0
@@ -65,7 +68,7 @@ OsWSdvMP2tRS8Oo=
 -----END CERTIFICATE-----
 EOF
 
-	certificate_private_key= <<EOF
+  certificate_private_key = <<EOF
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA24D9Mua4Jtl0dwwpTAVp1Gk2eODdLc+4/0AQIO76YgKs4GY2
 p5nrp0STMmo0yrikSjfQv1mVleXt8C+whlM9gsRvSJ5gbJNN2oAqseLwY89l4L6I
@@ -94,24 +97,23 @@ IHu8B12R2mN+lMn9mkOa4mSb9MrVQZ2FGg4lUAQro519NVBcVqoRsEDn1kHd+hhl
 L6c41r4AZ3Iyvr3MYoSohogBbAnd6TW14NjvBHceREhAqvmIWlWmAQ==
 -----END RSA PRIVATE KEY-----
 EOF
-	
 }
 
 resource "brightbox_container" "backups" {
-	name = "terraform_backups"
-	description = "Terraform example backup area"
+  name        = "terraform_backups"
+  description = "Terraform example backup area"
 }
 
 resource "brightbox_database_server" "database" {
-  name = "Terraform weblayer example database"
-  database_engine = "mysql"
-  database_version = "5.6"
+  name                = "Terraform weblayer example database"
+  database_engine     = "mysql"
+  database_version    = "5.6"
   maintenance_weekday = 6
-  maintenance_hour = 6
-  database_name = "backend"
-  database_username = "dbserver"
-  database_password = "nice-password"
-  allow_access = ["${brightbox_server_group.weblayer.id}"]
+  maintenance_hour    = 6
+  database_name       = "backend"
+  database_username   = "dbserver"
+  database_password   = "nice-password"
+  allow_access        = ["${brightbox_server_group.weblayer.id}"]
 }
 
 resource "brightbox_server_group" "weblayer" {
@@ -119,69 +121,65 @@ resource "brightbox_server_group" "weblayer" {
 }
 
 resource "brightbox_firewall_policy" "weblayer" {
-  name = "Used by terraform"
+  name         = "Used by terraform"
   server_group = "${brightbox_server_group.weblayer.id}"
 }
 
 resource "brightbox_firewall_rule" "weblayer_ssh" {
-    destination_port = 22
-    protocol = "tcp"
-    source = "any"
-    description = "SSH access from anywhere"
-    firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
+  destination_port = 22
+  protocol         = "tcp"
+  source           = "any"
+  description      = "SSH access from anywhere"
+  firewall_policy  = "${brightbox_firewall_policy.weblayer.id}"
 }
 
 resource "brightbox_firewall_rule" "weblayer_http" {
-    destination_port = 80
-    protocol = "tcp"
-    source = "any"
-    description = "HTTP access from anywhere"
-    firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
+  destination_port = 80
+  protocol         = "tcp"
+  source           = "any"
+  description      = "HTTP access from anywhere"
+  firewall_policy  = "${brightbox_firewall_policy.weblayer.id}"
 }
 
 resource "brightbox_firewall_rule" "weblayer_https" {
-    destination_port = 443
-    protocol = "tcp"
-    source = "any"
-    description = "HTTPs access from anywhere"
-    firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
+  destination_port = 443
+  protocol         = "tcp"
+  source           = "any"
+  description      = "HTTPs access from anywhere"
+  firewall_policy  = "${brightbox_firewall_policy.weblayer.id}"
 }
 
 resource "brightbox_firewall_rule" "weblayer_outbound" {
-    destination = "any"
-    description = "Outbound internet access"
-    firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
+  destination     = "any"
+  description     = "Outbound internet access"
+  firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
 }
 
 resource "brightbox_firewall_rule" "weblayer_icmp" {
-	protocol = "icmp"
-	source = "any"
-	icmp_type_name = "any"
-        firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
+  protocol        = "icmp"
+  source          = "any"
+  icmp_type_name  = "any"
+  firewall_policy = "${brightbox_firewall_policy.weblayer.id}"
 }
 
 resource "brightbox_server" "server1" {
-
   depends_on = ["brightbox_firewall_policy.weblayer"]
 
-  name = "Terraform web server example 1"
+  name  = "Terraform web server example 1"
   image = "${var.web_image}"
-  type = "${var.web_type}"
+  type  = "${var.web_type}"
 
   # Our Security group to allow HTTP and SSH access
   server_groups = ["${brightbox_server_group.weblayer.id}"]
-
 }
 
 resource "brightbox_server" "server2" {
-
   depends_on = ["brightbox_firewall_policy.weblayer"]
 
-  name = "Terraform web server example 2"
+  name  = "Terraform web server example 2"
   image = "${var.web_image}"
-  type = "${var.web_type}"
+  type  = "${var.web_type}"
 
   # Our Security group to allow HTTP and SSH access
   server_groups = ["${brightbox_server_group.weblayer.id}"]
-
 }
