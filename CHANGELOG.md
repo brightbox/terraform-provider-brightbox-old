@@ -3,6 +3,7 @@
 - Add plugin installer script
 - Allow userdata update
 - Add encoded userdata option - to support templates
+- Document resources
 
 ## 0.1.1 (August 22, 2017)
 
