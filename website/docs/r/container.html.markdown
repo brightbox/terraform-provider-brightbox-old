@@ -14,8 +14,7 @@ modify, and delete Containers in Orbit.
 ## Example Usage
 
 ```hcl
-# Default Container
-# the instances over SSH and HTTP
+# Example Container
 resource "brightbox_container" "initial" {
   name = "initial"
   description = "Initial database snapshots"
