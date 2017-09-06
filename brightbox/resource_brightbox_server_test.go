@@ -75,7 +75,7 @@ func TestAccBrightboxServer_userDataBase64(t *testing.T) {
 	rInt := acctest.RandInt()
 
 	resource.Test(t, resource.TestCase{
-		PreCheck: func() { testAccPreCheck(t) },
+		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testAccCheckBrightboxServerDestroy,
 		Steps: []resource.TestStep{
