@@ -22,8 +22,9 @@ resource "brightbox_database_server" "default" {
 	maintenance_weekday = 5
 	maintenance_hour = 4
 	allow_access = [
-		"${brightbox_server_group.barfoo.id}", "${brightbox_server.fooba
-r.id}", "158.152.1.65/32"
+		"${brightbox_server_group.barfoo.id}",
+		"${brightbox_server.foobar.id}",
+		"158.152.1.65/32"
 	]
 }
 
