@@ -106,7 +106,7 @@ EOF
 The following arguments are supported:
 
 * `name` - (Optional) A label assigned to the Load Balancer
-* `policy` - (Optional) Method of load balancing to use, either `least-connections` or `round-robin`)
+* `policy` - (Optional) Method of load balancing to use, either `least-connections` or `round-robin`
 * `certificate_pem` - (Optional) A X509 SSL certificate in PEM format. Must be included along with `certificate_key`. If intermediate certificates are required they should be concatenated after the main certificate
 * `certificate_private_key` - (Optional) The RSA private key used to sign the certificate in PEM format. Must be included along with `certificate_pem`
 * `sslv3` - (Optional) Allow SSL v3 to be used. Default is `false`
