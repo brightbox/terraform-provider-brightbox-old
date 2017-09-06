@@ -39,10 +39,10 @@ The following arguments are supported:
 * `firewall_policy` - (Required) The ID of the firewall policy this rule belongs to
 * `protocol` - (Optional) Protocol Number or one of `tcp`, `udp`, `icmp`
 * `source` - (Optional) Subnet, ServerGroup or ServerID. `any`,`10.1.1.23/32` or `srv-4ktk4`
-* `source_port` - (Optional) single port, multiple ports or range separated by `-` or `:`; upto 255 characters example - `80`, `80,443,21` or `3000-3999`
+* `source_port` - (Optional) single port, multiple ports or range separated by `-` or `:`; upto 255 characters. Example - `80`, `80,443,21` or `3000-3999`
 * `destination` - (Optional) Subnet, ServerGroup or ServerID. `any`,`10.1.1.23/32` or `srv-4ktk4`
-* `destination_port` - (Optional) single port, multiple ports or range separated by `-` or `:`; upto 255 characters example - `80`, `80,443,21` or `3000-3999`
-* `icmp_type_name` - (Optional) ICMP type name. `echo-request`, `echo-reply`. Only allowed if protocol is icmp.
+* `destination_port` - (Optional) single port, multiple ports or range separated by `-` or `:`; upto 255 characters. Example - `80`, `80,443,21` or `3000-3999`
+* `icmp_type_name` - (Optional) ICMP type name. `echo-request`, `echo-reply`. Only allowed if protocol is `icmp`.
 * `description` - (Optional) A further description of the Firewall Rule
 
 ~> **NOTE:** Only one of `source` or `destination` can be specified
