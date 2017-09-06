@@ -34,7 +34,7 @@ resource "brightbox_server" "web" {
 
 The following arguments are supported:
 
-* `name` - (Optional) The Server Group name
+* `name` - (Optional) A label assigned to the Server Group
 * `description` - (Optional) A further description of the Server Group
 
 ## Attributes Reference

@@ -25,7 +25,7 @@ resource "brightbox_container" "initial" {
 
 The following arguments are supported:
 
-* `name` - (Required) The Container name
+* `name` - (Required) A label assigned to the Container
 * `description` - (Optional) A further description of the Container
 * `orbit_url` - (Optional) The Orbit URL you wish to talk to. This defaults to either `https://orbit.brightbox.com/v1/` or the contents of the `BRIGHTBOX_ORBIT_URL` environment variable if set.
 

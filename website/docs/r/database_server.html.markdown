@@ -42,7 +42,7 @@ resource "brightbox_server_group" "barfoo" {
 
 The following arguments are supported:
 
-* `name` - (Optional) The Database Server name
+* `name` - (Optional) A label assigned to the Database Server
 * `description` - (Optional) A further description of the Database Server
 * `maintenance_weekday` - (Optional) Numerical index of weekday (0 is Sunday, 1 is Monday...) to set when automatic updates may be performed. Default is 0 (Sunday). 
 * `maintenance_hour` - (Optional) Number representing 24hr time start of maintenance window hour for x:00-x:59 (0-23). Default is 6
