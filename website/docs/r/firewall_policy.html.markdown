@@ -27,7 +27,7 @@ resource "brightbox_firewall_policy" "default" {
 
 The following arguments are supported:
 
-* `server_group` - (Optional) The ID of the server group the policy will be applied to
+* `server_group` - (Optional) The ID of the Server Group the policy will be applied to
 * `name` - (Optional) A label to assign to the Firewall Policy
 * `description` - (Optional) A further description of the Firewall Policy
 
