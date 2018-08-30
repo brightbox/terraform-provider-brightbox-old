@@ -42,7 +42,8 @@ pipeline {
 	target="\$(printf '%s\n' \${target} | sed 's/\\/brightbox\\//\\/terraform-providers\\//')"
 	target="/go/src/\${target%.git}"
 	cd "\${target}"
-	make testaccjunit
+	go get github.com/jstemmer/go-junit-report
+	make testacc | go-junit-report | tee report.xml
 	cp report.xml $WORKSPACE
 	"""
       }
