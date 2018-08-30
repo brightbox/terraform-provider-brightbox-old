@@ -25,7 +25,7 @@ pipeline {
         sh """
 	target=\$(git ls-remote --get-url)
 	target="\${target#https://}"
-	target="\$(printf '%s\n' \${target} | sed 's/\/brightbox\//\/terraform-providers\//')"
+	target="\$(printf '%s\n' \${target} | sed 's/\\/brightbox\\//\\/terraform-providers\\//')"
 	target="/go/src/\${target%.git}"
 	mkdir -p "\$(dirname \${target})"
         cp -a "$WORKSPACE" "\${target}"
@@ -39,7 +39,7 @@ pipeline {
 	sh """
 	target=\$(git ls-remote --get-url)
 	target="\${target#https://}"
-	target="\$(printf '%s\n' \${target} | sed 's/\/brightbox\//\/terraform-providers\//')"
+	target="\$(printf '%s\n' \${target} | sed 's/\\/brightbox\\//\\/terraform-providers\\//')"
 	target="/go/src/\${target%.git}"
 	cd "\${target}"
 	make testaccjunit
@@ -60,7 +60,7 @@ pipeline {
 	sh """
 	target=\$(git ls-remote --get-url)
 	target="\${target#https://}"
-	target="\$(printf '%s\n' \${target} | sed 's/\/brightbox\//\/terraform-providers\//')"
+	target="\$(printf '%s\n' \${target} | sed 's/\\/brightbox\\//\\/terraform-providers\\//')"
 	target="/go/src/\${target%.git}"
 	cd "\${target}"
 	RELEASEARGS="--snapshot" make release
@@ -75,7 +75,7 @@ pipeline {
 	sh """
 	target=\$(git ls-remote --get-url)
 	target="\${target#https://}"
-	target="\$(printf '%s\n' \${target} | sed 's/\/brightbox\//\/terraform-providers\//')"
+	target="\$(printf '%s\n' \${target} | sed 's/\\/brightbox\\//\\/terraform-providers\\//')"
 	target="/go/src/\${target%.git}"
 	cd "\${target}"
 	make release
