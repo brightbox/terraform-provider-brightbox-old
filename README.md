@@ -1,6 +1,10 @@
 Terraform Provider for [Brightbox Cloud](https://www.brightbox.com)
 =======================================
 
+The terraform provider has now been adopted as an official provider and is
+available at https://github.com/terraform-providers/terraform-provider-brightbox
+
+
 Requirements
 ------------
 
